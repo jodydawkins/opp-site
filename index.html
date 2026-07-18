@@ -1,205 +1,60 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Open Presence Protocol — an open, decentralized protocol for publishing and discovering online presence.">
-  <title>Open Presence Protocol</title>
-  <style>
-    :root {
-      color-scheme: dark;
-      --bg: #06090d;
-      --panel: #0d131b;
-      --panel-2: #101924;
-      --line: #213142;
-      --text: #edf6ff;
-      --muted: #91a4b8;
-      --green: #67f5ad;
-      --cyan: #69d9ff;
-      --amber: #ffd479;
-      --shadow: 0 24px 80px rgba(0,0,0,.38);
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      min-width: 0;
-      background:
-        radial-gradient(circle at 12% 0%, rgba(105,217,255,.12), transparent 28rem),
-        radial-gradient(circle at 90% 12%, rgba(103,245,173,.08), transparent 26rem),
-        var(--bg);
-      color: var(--text);
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      line-height: 1.6;
-    }
-    a { color: inherit; }
-    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-bottom: 1px solid rgba(145,164,184,.16);
-      background: rgba(6,9,13,.78);
-      backdrop-filter: blur(18px);
-    }
-    nav { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 760; letter-spacing: .01em; }
-    .mark { width: 30px; height: 30px; border: 1px solid var(--green); border-radius: 8px; display: grid; place-items: center; color: var(--green); box-shadow: 0 0 24px rgba(103,245,173,.18); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .navlinks { display: flex; gap: 18px; align-items: center; }
-    .navlinks a { color: var(--muted); text-decoration: none; font-size: .92rem; }
-    .navlinks a:hover { color: var(--text); }
-    .hero { padding: 112px 0 72px; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; }
-    .eyebrow { color: var(--green); font: 700 .78rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
-    h1 { max-width: 760px; margin: 16px 0 20px; font-size: clamp(3rem, 8vw, 6.7rem); line-height: .92; letter-spacing: -.065em; }
-    .lede { max-width: 650px; margin: 0; color: var(--muted); font-size: clamp(1.08rem, 2vw, 1.32rem); }
-    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-weight: 700; }
-    .button.primary { background: var(--green); color: #04110a; border-color: var(--green); }
-    .terminal { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(13,19,27,.94); box-shadow: var(--shadow); }
-    .terminal-bar { display: flex; align-items: center; gap: 8px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
-    .dot { width: 10px; height: 10px; border-radius: 50%; background: #34485b; }
-    .terminal-title { margin-left: 7px; color: var(--muted); font: .75rem ui-monospace, SFMono-Regular, Menlo, monospace; }
-    .terminal pre { margin: 0; padding: 22px; max-width: 100%; overflow-x: auto; color: #cfe0ee; font: .84rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
-    .prompt { color: var(--green); }
-    .output { color: var(--cyan); }
-    section { padding: 76px 0; }
-    .section-head { max-width: 760px; margin-bottom: 34px; }
-    h2 { margin: 10px 0 14px; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.02; letter-spacing: -.04em; }
-    .section-head p { color: var(--muted); font-size: 1.08rem; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .card { min-width: 0; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(16,25,36,.92), rgba(13,19,27,.92)); padding: 24px; }
-    .card h3 { margin: 0 0 10px; font-size: 1.08rem; }
-    .card p { margin: 0; color: var(--muted); }
-    .console-wrap { display: grid; grid-template-columns: .72fr 1.28fr; gap: 24px; align-items: start; }
-    .status { display: inline-flex; align-items: center; gap: 9px; color: var(--green); font: 700 .78rem ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .1em; }
-    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 18px currentColor; }
-    .document { min-width: 0; overflow: hidden; }
-    .document pre { margin: 0; width: 100%; max-width: 100%; max-height: 520px; overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: #080d13; padding: 22px; color: #bcd1e1; font: .78rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
-    .meta { margin-top: 16px; color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; }
-    .north-star { text-align: center; padding: 116px 0 126px; }
-    .north-star p { margin: 0 auto; max-width: 900px; font-size: clamp(2.4rem, 7vw, 6rem); line-height: .98; letter-spacing: -.055em; font-weight: 800; }
-    .north-star span { color: var(--green); }
-    footer { border-top: 1px solid rgba(145,164,184,.16); padding: 28px 0 38px; color: var(--muted); }
-    .footer-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
-    @media (max-width: 820px) {
-      .navlinks { display: none; }
-      .hero { grid-template-columns: 1fr; padding-top: 78px; gap: 40px; }
-      .grid, .console-wrap { grid-template-columns: 1fr; }
-    }
-    @media (max-width: 520px) {
-      .shell { width: min(100% - 22px, 1120px); }
-      h1 { font-size: clamp(3.1rem, 17vw, 5rem); }
-      .hero { padding-top: 62px; }
-      section { padding: 58px 0; }
-      .terminal pre, .document pre { padding: 16px; font-size: .72rem; }
-      .actions .button { width: 100%; }
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Open Presence Protocol</title>
+<meta name="description" content="Publish a cryptographically verifiable declaration of where you can be found online—independent of any platform.">
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <header>
-    <div class="shell">
-      <nav>
-        <a class="brand" href="#top"><span class="mark">O</span><span>Open Presence Protocol</span></a>
-        <div class="navlinks">
-          <a href="#protocol">Protocol</a>
-          <a href="#presence">Live presence</a>
-          <a href="https://github.com/jodydawkins/opp">GitHub</a>
-        </div>
-      </nav>
-    </div>
-  </header>
-
-  <main id="top">
-    <div class="shell hero">
-      <div>
-        <div class="eyebrow">Open protocol · independently hosted</div>
-        <h1>DNS for people.</h1>
-        <p class="lede">Open Presence Protocol is an open, decentralized protocol for publishing and discovering where an identity can be found online—without making a platform the center of the relationship.</p>
-        <div class="actions">
-          <a class="button primary" href="https://github.com/jodydawkins/opp/blob/main/SPEC.md">Read the specification</a>
-          <a class="button" href="https://github.com/jodydawkins/opp">View the reference implementation</a>
-        </div>
-      </div>
-      <div class="terminal" aria-label="OPP verification example">
-        <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">opp / protocol console</span></div>
-        <pre><span class="prompt">$</span> curl -o presence.json \
+<main><header class="site-header"><a class="wordmark" href="#top" aria-label="Open Presence Protocol home"><strong>OPP</strong><span>/</span><em>Open Presence Protocol</em></a><nav aria-label="Primary navigation"><a href="#how">How it works</a><a href="https://github.com/jodydawkins/opp/blob/main/SPEC.md">Spec</a><a href="#ecosystem">Ecosystem</a><a href="https://github.com/jodydawkins/opp">GitHub</a></nav></header><section class="hero" id="top"><div class="circuit circuit-a"></div><div class="circuit circuit-b"></div><div class="hero-copy"><p class="eyebrow"><span></span> Open · decentralized · verifiable</p><h1>Your identity.<br/>Your presence.<br/><span>Your terms.</span></h1><p class="lede">Publish a cryptographically verifiable declaration of where you can be found online—independent of any platform.</p><div class="actions"><a class="button primary" href="https://github.com/jodydawkins/opp/blob/main/SPEC.md">Read the specification <span aria-hidden="true">↗</span></a><a class="button secondary" href="https://github.com/jodydawkins/opp">Explore on GitHub <span aria-hidden="true">↗</span></a></div><div class="proofs" aria-label="Protocol principles"><div><span class="mark" aria-hidden="true">{}</span><span>Signed JSON<br/>documents</span></div><div><span class="mark" aria-hidden="true">⌁</span><span>No central<br/>owner</span></div><div><span class="mark" aria-hidden="true">◎</span><span>Built for the<br/>open web</span></div></div></div><div class="console-wrap" aria-label="Example signed presence document"><div class="orb"></div><article class="console"><div class="console-head"><div><span class="file-icon">◇</span><strong>presence.json</strong></div><span class="verified"><span>✓</span> Verified</span></div><div class="code-window"><div class="line-numbers" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span><span>29</span><span>30</span><span>31</span><span>32</span><span>33</span><span>34</span><span>35</span><span>36</span><span>37</span><span>38</span><span>39</span><span>40</span><span>41</span><span>42</span><span>43</span><span>44</span><span>45</span></div><pre><code>{
+  &quot;issued_at&quot;: &quot;2026-07-16T04:00:00Z&quot;,
+  &quot;public_key&quot;: &quot;gNhdiLJhE0NRL5BOnRV1Zi1wEGINqDLzR2329ikZk0c&quot;,
+  &quot;services&quot;: [
+    {
+      &quot;type&quot;: &quot;Website&quot;,
+      &quot;url&quot;: &quot;https://jodydawkins.com&quot;
+    },
+    {
+      &quot;type&quot;: &quot;Tidal&quot;,
+      &quot;url&quot;: &quot;https://tidal.com/artist/20195859&quot;
+    },
+    {
+      &quot;type&quot;: &quot;Spotify&quot;,
+      &quot;url&quot;: &quot;https://open.spotify.com/artist/522ZyQMBe0xOfnJl9wWM4U&quot;
+    },
+    {
+      &quot;type&quot;: &quot;Apple Music&quot;,
+      &quot;url&quot;: &quot;https://music.apple.com/us/artist/jody-dawkins/1520886678&quot;
+    },
+    {
+      &quot;type&quot;: &quot;YouTube&quot;,
+      &quot;url&quot;: &quot;https://www.youtube.com/channel/UCsHFy8n7pQKf0feE0RxLNpQ/videos&quot;
+    },
+    {
+      &quot;type&quot;: &quot;GitHub&quot;,
+      &quot;url&quot;: &quot;https://github.com/jodydawkins&quot;
+    },
+    {
+      &quot;type&quot;: &quot;Instagram&quot;,
+      &quot;url&quot;: &quot;https://www.instagram.com/jody_dawkins/&quot;
+    },
+    {
+      &quot;type&quot;: &quot;TikTok&quot;,
+      &quot;url&quot;: &quot;https://tiktok.com/@jody_dawkins&quot;
+    }
+  ],
+  &quot;signature&quot;: {
+    &quot;algorithm&quot;: &quot;ed25519&quot;,
+    &quot;value&quot;: &quot;Grem07CoHHF-aHQrjzPON4pLE0PHZxjcvn7wGPGc4eDrzX0xyIlBNNFV64DooVb_fpRUkr-d-NvRjJ9jpPAVBQ&quot;
+  },
+  &quot;subject&quot;: &quot;key:sha256:r04mk-KJfvTnlnVSTUpnT283CGbHSWJkFMevj-G72Ts&quot;,
+  &quot;type&quot;: &quot;open-presence&quot;,
+  &quot;version&quot;: &quot;0.1&quot;
+}</code></pre></div><div class="console-foot"><div><span>Live document</span><strong><a href="https://jodydawkins.com/.opp/presence.json">jodydawkins.com ↗</a></strong></div><div><span>Document status</span><strong class="valid"><i></i> Valid</strong></div></div></article></div></section><section class="statement" id="how"><p class="section-label">01 / The idea</p><h2>Your online presence should not belong to a platform.</h2><p>OPP defines a small, signed JSON document that declares your public services. It does not define your identity or carry your content. You publish the declaration; any compatible application can verify it.</p></section><section class="steps" aria-label="How OPP works"><article><span>01</span><div class="step-icon">✦</div><h3>Declare</h3><p>List the HTTPS services that make up your public presence.</p></article><article><span>02</span><div class="step-icon">⌁</div><h3>Sign</h3><p>Canonicalize the document and sign it with an Ed25519 key.</p></article><article><span>03</span><div class="step-icon">◎</div><h3>Verify</h3><p>Any consumer can check the subject, signature, timestamps, and service URLs.</p></article></section><section class="why"><div><p class="section-label">02 / Why OPP?</p><h2>The relationship should belong to the people in it.</h2></div><div class="why-copy"><p>People are scattered across websites, feeds, social networks, and services. Today, platforms mediate those connections—and can reshape, restrict, or erase them.</p><p>OPP gives each person a portable, verifiable declaration of where they can be found. Applications can follow the person while platforms remain replaceable destinations.</p><a href="https://github.com/jodydawkins/opp/blob/main/WHY.md">Read why OPP exists <span aria-hidden="true">↗</span></a></div></section><section class="principles" id="ecosystem"><div><p class="section-label">03 / The principles</p><h2>Small by design.<br/>Open by default.</h2></div><div class="principle-list"><article><span>PORTABLE</span><h3>Platforms are destinations, not owners.</h3><p>Your presence is a document you control, hosted at an HTTPS location you choose.</p></article><article><span>VERIFIABLE</span><h3>Trust the declaration, not the directory.</h3><p>A directory only resolves the document location. Consumers still fetch and verify the signed document themselves.</p></article><article><span>FOCUSED</span><h3>Presence—and nothing else.</h3><p>OPP does not define identity, content distribution, messaging, social networking, search, or ranking.</p></article></div></section><section class="build"><div><p class="section-label">04 / Build with OPP</p><h2>One protocol.<br/>Three reference projects.</h2><p>The core specification defines presence documents, signing, and verification. The Ruby implementation puts those rules into code. The directory server adds registration and resolution without becoming the source of truth.</p><p class="status-line"><i></i> Draft specification · Version 0.1 · Experimental</p></div><div><div class="quickstart"><div><span>TRY IT</span><small>Verify a live OPP document</small></div><pre><code>curl -fsSLo presence.json \
   https://jodydawkins.com/.opp/presence.json
 
-<span class="prompt">$</span> opp verify presence.json
-<span class="output">valid</span>
-
-<span class="prompt">$</span> echo "The document belongs to its signer."
-The document belongs to its signer.</pre>
-      </div>
-    </div>
-
-    <section id="protocol">
-      <div class="shell">
-        <div class="section-head">
-          <div class="eyebrow">One small protocol</div>
-          <h2>Presence without captivity.</h2>
-          <p>OPP describes where a person or organization exists online. It does not own identity, host content, replace existing services, or create another social network.</p>
-        </div>
-        <div class="grid">
-          <article class="card"><h3>Independently hosted</h3><p>A presence document can live on infrastructure controlled by the person or entity it represents.</p></article>
-          <article class="card"><h3>Cryptographically signed</h3><p>An identity signs its presence document so clients can verify the declaration instead of trusting a platform.</p></article>
-          <article class="card"><h3>Implementation-neutral</h3><p>Any application or language can implement the published specification without permission or centralized approval.</p></article>
-        </div>
-      </div>
-    </section>
-
-    <section id="presence">
-      <div class="shell console-wrap">
-        <div>
-          <div class="eyebrow">Live document</div>
-          <h2>Published by its owner.</h2>
-          <p class="lede">This console retrieves Jody Dawkins’s signed presence document from his own domain. The document remains the source; this site only displays it.</p>
-          <p class="meta"><span id="status" class="status">Connecting</span></p>
-          <p class="meta" id="detail">Fetching https://jodydawkins.com/.opp/presence.json</p>
-        </div>
-        <div class="document">
-          <pre id="presence-doc">Loading presence document…</pre>
-        </div>
-      </div>
-    </section>
-
-    <section class="north-star">
-      <div class="shell">
-        <p>Follow people, <span>not platforms.</span></p>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="shell footer-row">
-      <span>Open Presence Protocol</span>
-      <span>Apache-2.0 · Built in the open</span>
-    </div>
-  </footer>
-
-  <script>
-    const url = 'https://jodydawkins.com/.opp/presence.json';
-    const output = document.getElementById('presence-doc');
-    const status = document.getElementById('status');
-    const detail = document.getElementById('detail');
-
-    fetch(url, { cache: 'no-store' })
-      .then(response => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.json();
-      })
-      .then(documentData => {
-        output.textContent = JSON.stringify(documentData, null, 2);
-        status.textContent = 'Document retrieved';
-        detail.textContent = url;
-      })
-      .catch(error => {
-        status.textContent = 'Document unavailable';
-        status.style.color = 'var(--amber)';
-        detail.textContent = `${url} · ${error.message}`;
-        output.textContent = 'The presence document could not be loaded in this browser.\n\nRetrieve it directly:\n\ncurl -o presence.json https://jodydawkins.com/.opp/presence.json\nopp verify presence.json';
-      });
-  </script>
+opp verify presence.json</code></pre><p>Expected output: <strong>valid</strong></p></div><div class="repo-grid"><a href="https://github.com/jodydawkins/opp"><small>CORE SPECIFICATION · DRAFT 0.1</small><strong>jodydawkins/opp</strong><span aria-hidden="true">↗</span></a><a href="https://github.com/jodydawkins/opp-ruby"><small>RUBY REFERENCE IMPLEMENTATION</small><strong>jodydawkins/opp-ruby</strong><span aria-hidden="true">↗</span></a><a href="https://github.com/jodydawkins/opp-directory"><small>REFERENCE DIRECTORY SERVER</small><strong>jodydawkins/opp-directory</strong><span aria-hidden="true">↗</span></a></div></div></section><footer><div class="footer-mark">OPP<span>/</span></div><p>Follow people,<br/>not platforms.</p><div class="footer-links"><a href="https://github.com/jodydawkins/opp/blob/main/SPEC.md">Specification</a><a href="https://github.com/jodydawkins/opp/blob/main/WHY.md">Why OPP?</a><a href="https://github.com/jodydawkins/opp">GitHub</a></div><small>Open Presence Protocol · Apache 2.0</small></footer></main>
 </body>
 </html>
