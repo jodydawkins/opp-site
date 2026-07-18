@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Open Presence Protocol — an open, decentralized protocol for publishing and discovering online presence.">
+  <title>Open Presence Protocol</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #06090d;
+      --panel: #0d131b;
+      --panel-2: #101924;
+      --line: #213142;
+      --text: #edf6ff;
+      --muted: #91a4b8;
+      --green: #67f5ad;
+      --cyan: #69d9ff;
+      --amber: #ffd479;
+      --shadow: 0 24px 80px rgba(0,0,0,.38);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 0;
+      background:
+        radial-gradient(circle at 12% 0%, rgba(105,217,255,.12), transparent 28rem),
+        radial-gradient(circle at 90% 12%, rgba(103,245,173,.08), transparent 26rem),
+        var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.6;
+    }
+    a { color: inherit; }
+    .shell { width: min(1120px, calc(100% - 32px)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(145,164,184,.16);
+      background: rgba(6,9,13,.78);
+      backdrop-filter: blur(18px);
+    }
+    nav { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 760; letter-spacing: .01em; }
+    .mark { width: 30px; height: 30px; border: 1px solid var(--green); border-radius: 8px; display: grid; place-items: center; color: var(--green); box-shadow: 0 0 24px rgba(103,245,173,.18); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .navlinks { display: flex; gap: 18px; align-items: center; }
+    .navlinks a { color: var(--muted); text-decoration: none; font-size: .92rem; }
+    .navlinks a:hover { color: var(--text); }
+    .hero { padding: 112px 0 72px; display: grid; grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; }
+    .eyebrow { color: var(--green); font: 700 .78rem/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { max-width: 760px; margin: 16px 0 20px; font-size: clamp(3rem, 8vw, 6.7rem); line-height: .92; letter-spacing: -.065em; }
+    .lede { max-width: 650px; margin: 0; color: var(--muted); font-size: clamp(1.08rem, 2vw, 1.32rem); }
+    .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+    .button { display: inline-flex; align-items: center; justify-content: center; min-height: 46px; padding: 0 18px; border-radius: 9px; border: 1px solid var(--line); background: var(--panel); color: var(--text); text-decoration: none; font-weight: 700; }
+    .button.primary { background: var(--green); color: #04110a; border-color: var(--green); }
+    .terminal { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: rgba(13,19,27,.94); box-shadow: var(--shadow); }
+    .terminal-bar { display: flex; align-items: center; gap: 8px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+    .dot { width: 10px; height: 10px; border-radius: 50%; background: #34485b; }
+    .terminal-title { margin-left: 7px; color: var(--muted); font: .75rem ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .terminal pre { margin: 0; padding: 22px; max-width: 100%; overflow-x: auto; color: #cfe0ee; font: .84rem/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+    .prompt { color: var(--green); }
+    .output { color: var(--cyan); }
+    section { padding: 76px 0; }
+    .section-head { max-width: 760px; margin-bottom: 34px; }
+    h2 { margin: 10px 0 14px; font-size: clamp(2rem, 5vw, 3.6rem); line-height: 1.02; letter-spacing: -.04em; }
+    .section-head p { color: var(--muted); font-size: 1.08rem; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .card { min-width: 0; border: 1px solid var(--line); border-radius: 14px; background: linear-gradient(180deg, rgba(16,25,36,.92), rgba(13,19,27,.92)); padding: 24px; }
+    .card h3 { margin: 0 0 10px; font-size: 1.08rem; }
+    .card p { margin: 0; color: var(--muted); }
+    .console-wrap { display: grid; grid-template-columns: .72fr 1.28fr; gap: 24px; align-items: start; }
+    .status { display: inline-flex; align-items: center; gap: 9px; color: var(--green); font: 700 .78rem ui-monospace, SFMono-Regular, Menlo, monospace; text-transform: uppercase; letter-spacing: .1em; }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; box-shadow: 0 0 18px currentColor; }
+    .document { min-width: 0; overflow: hidden; }
+    .document pre { margin: 0; width: 100%; max-width: 100%; max-height: 520px; overflow: auto; border: 1px solid var(--line); border-radius: 14px; background: #080d13; padding: 22px; color: #bcd1e1; font: .78rem/1.65 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; white-space: pre; }
+    .meta { margin-top: 16px; color: var(--muted); font-size: .88rem; overflow-wrap: anywhere; }
+    .north-star { text-align: center; padding: 116px 0 126px; }
+    .north-star p { margin: 0 auto; max-width: 900px; font-size: clamp(2.4rem, 7vw, 6rem); line-height: .98; letter-spacing: -.055em; font-weight: 800; }
+    .north-star span { color: var(--green); }
+    footer { border-top: 1px solid rgba(145,164,184,.16); padding: 28px 0 38px; color: var(--muted); }
+    .footer-row { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+    @media (max-width: 820px) {
+      .navlinks { display: none; }
+      .hero { grid-template-columns: 1fr; padding-top: 78px; gap: 40px; }
+      .grid, .console-wrap { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 520px) {
+      .shell { width: min(100% - 22px, 1120px); }
+      h1 { font-size: clamp(3.1rem, 17vw, 5rem); }
+      .hero { padding-top: 62px; }
+      section { padding: 58px 0; }
+      .terminal pre, .document pre { padding: 16px; font-size: .72rem; }
+      .actions .button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="shell">
+      <nav>
+        <a class="brand" href="#top"><span class="mark">O</span><span>Open Presence Protocol</span></a>
+        <div class="navlinks">
+          <a href="#protocol">Protocol</a>
+          <a href="#presence">Live presence</a>
+          <a href="https://github.com/jodydawkins/opp">GitHub</a>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <div class="shell hero">
+      <div>
+        <div class="eyebrow">Open protocol · independently hosted</div>
+        <h1>DNS for people.</h1>
+        <p class="lede">Open Presence Protocol is an open, decentralized protocol for publishing and discovering where an identity can be found online—without making a platform the center of the relationship.</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/jodydawkins/opp/blob/main/SPEC.md">Read the specification</a>
+          <a class="button" href="https://github.com/jodydawkins/opp">View the reference implementation</a>
+        </div>
+      </div>
+      <div class="terminal" aria-label="OPP verification example">
+        <div class="terminal-bar"><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="terminal-title">opp / protocol console</span></div>
+        <pre><span class="prompt">$</span> curl -o presence.json \
+  https://jodydawkins.com/.opp/presence.json
+
+<span class="prompt">$</span> opp verify presence.json
+<span class="output">valid</span>
+
+<span class="prompt">$</span> echo "The document belongs to its signer."
+The document belongs to its signer.</pre>
+      </div>
+    </div>
+
+    <section id="protocol">
+      <div class="shell">
+        <div class="section-head">
+          <div class="eyebrow">One small protocol</div>
+          <h2>Presence without captivity.</h2>
+          <p>OPP describes where a person or organization exists online. It does not own identity, host content, replace existing services, or create another social network.</p>
+        </div>
+        <div class="grid">
+          <article class="card"><h3>Independently hosted</h3><p>A presence document can live on infrastructure controlled by the person or entity it represents.</p></article>
+          <article class="card"><h3>Cryptographically signed</h3><p>An identity signs its presence document so clients can verify the declaration instead of trusting a platform.</p></article>
+          <article class="card"><h3>Implementation-neutral</h3><p>Any application or language can implement the published specification without permission or centralized approval.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section id="presence">
+      <div class="shell console-wrap">
+        <div>
+          <div class="eyebrow">Live document</div>
+          <h2>Published by its owner.</h2>
+          <p class="lede">This console retrieves Jody Dawkins’s signed presence document from his own domain. The document remains the source; this site only displays it.</p>
+          <p class="meta"><span id="status" class="status">Connecting</span></p>
+          <p class="meta" id="detail">Fetching https://jodydawkins.com/.opp/presence.json</p>
+        </div>
+        <div class="document">
+          <pre id="presence-doc">Loading presence document…</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="north-star">
+      <div class="shell">
+        <p>Follow people, <span>not platforms.</span></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell footer-row">
+      <span>Open Presence Protocol</span>
+      <span>Apache-2.0 · Built in the open</span>
+    </div>
+  </footer>
+
+  <script>
+    const url = 'https://jodydawkins.com/.opp/presence.json';
+    const output = document.getElementById('presence-doc');
+    const status = document.getElementById('status');
+    const detail = document.getElementById('detail');
+
+    fetch(url, { cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        return response.json();
+      })
+      .then(documentData => {
+        output.textContent = JSON.stringify(documentData, null, 2);
+        status.textContent = 'Document retrieved';
+        detail.textContent = url;
+      })
+      .catch(error => {
+        status.textContent = 'Document unavailable';
+        status.style.color = 'var(--amber)';
+        detail.textContent = `${url} · ${error.message}`;
+        output.textContent = 'The presence document could not be loaded in this browser.\n\nRetrieve it directly:\n\ncurl -o presence.json https://jodydawkins.com/.opp/presence.json\nopp verify presence.json';
+      });
+  </script>
+</body>
+</html>
